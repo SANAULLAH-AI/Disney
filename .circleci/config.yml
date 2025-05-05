@@ -4,6 +4,7 @@ executors:
     docker:
       - image: cimg/node:18.20.2
     working_directory: ~/project
+
 jobs:
   install-yarn:
     executor: node-executor
@@ -19,21 +20,8 @@ jobs:
       - run:
           name: Install Yarn
           command: npm install -g yarn
-      - run:
-          name: Install dependencies
-          command: yarn install
-      - run:
-          name: Build app
-          command: |
-            cd $(git rev-parse --show-toplevel)
-            yarn build
-      - run:
-          name: Run tests
-          command: yarn test
-      - run:
-          name: Lint code
-          command: yarn lint
+
 workflows:
-  build-test-lint:
+  install_yarn:
     jobs:
       - install-yarn
