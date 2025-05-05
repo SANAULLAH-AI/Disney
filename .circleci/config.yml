@@ -24,7 +24,9 @@ jobs:
           command: yarn install
       - run:
           name: Build app
-          command: yarn build
+          command: |
+            cd $(git rev-parse --show-toplevel)
+            yarn build
       - run:
           name: Run tests
           command: yarn test
