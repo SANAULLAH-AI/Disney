@@ -1,51 +1,18 @@
 version: 2.1
 executors:
-  react-native-executor:
+  node-executor:
     docker:
       - image: cimg/node:18.20.2
     working_directory: ~/project
 jobs:
-  build-android-apk:
-    executor: react-native-executor
+  install-yarn:
+    executor: node-executor
     steps:
       - checkout
       - run:
           name: Install Yarn
           command: npm install -g yarn
-      - restore_cache:
-          keys:
-            - yarn-cache-{{ checksum "yarn.lock" }}
-            - yarn-cache-
-      - run:
-          name: Install dependencies
-          command: yarn install
-      - save_cache:
-          paths:
-            - ~/.cache/yarn
-          key: yarn-cache-{{ checksum "yarn.lock" }}
-      - run:
-          name: Install Android SDK
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y openjdk-11-jdk
-            curl -sSL https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -o cmdline-tools.zip
-            unzip -q cmdline-tools.zip
-            mkdir -p $HOME/android-sdk/cmdline-tools
-            mv cmdline-tools $HOME/android-sdk/cmdline-tools/latest
-            export ANDROID_SDK_ROOT=$HOME/android-sdk
-            export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
-            yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
-            $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
-      - run:
-          name: Build APK
-          command: |
-            export ANDROID_SDK_ROOT=$HOME/android-sdk
-            cd android
-            ./gradlew assembleRelease
-      - store_artifacts:
-          path: android/app/build/outputs/apk/release/app-release.apk
-          destination: app-release.apk
 workflows:
-  build_apk:
+  install_yarn:
     jobs:
-      - build-android-apk
+      - install-yarn
