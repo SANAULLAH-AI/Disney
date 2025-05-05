@@ -10,8 +10,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install Yarn (with sudo)
-          command: sudo npm install -g yarn
+          name: Install Yarn
+          command: npm install -g yarn
 workflows:
   install_yarn:
     jobs:
